@@ -1,39 +1,36 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
 int main()
 {
-  int N, K;
-  cin >> N >> K;
-  vector<int> h(N);
-  for (int i = 0; i < N; i++)
+  int n, k;
+  cin >> n >> k;
+  vector<int> h(n);
+  for (int i = 0; i < n; i++)
   {
-    cin >> h.at(i);
+    cin >> h[i];
   }
 
-  vector<int> dp(N); // dp[i] = 足場iにたどり着くまでの最小コスト
-  dp.at(0) = 0;
-  int tmp;
-  for (int i = 1; i < N; i++)
-  { // iまでの最小値を求める
-    dp.at(i) = dp.at(i - 1) + abs(h.at(i - 1) - h.at(i));
-    for (int j = 2; j <= K; j++)
+  /*
+  足場iにいるとき, 足場i+1, i+2, ..., i+kにジャンプ
+  足場nにたどり着くまでの最小コスト
+  */
+
+  vector<int> dp(n);
+  // dp[i] 足場iにたどり着くまでの最小コスト
+  dp[0] = 0;
+  // dp[1] = abs(h[1] - h[0]);
+  for (int i = 1; i < n; i++)
+  {
+    dp[i] = dp[i-1] + abs(h[i] - h[i - 1]);
+    for (int j = 2; j <= k; j++)
     {
-      // i-jからiまでの値をそれぞれ比較する
-      // i-2, 3 ,K からの最小値を考える
-      if (i - j >= 0)
-      {
-        tmp = dp.at(i - j) + abs(h.at(i - j) - h.at(i));
-        if (tmp < dp.at(i))
-        {
-          dp.at(i) = tmp;
-        }
-      }else {
+      if(i - j < 0)
         break;
-      }
+      dp[i] = min(dp[i],
+                  dp[i - j] + abs(h[i] - h[i - j]));
     }
+    // cout << "dp[" << i << "] = " << dp[i] << endl;
   }
-
-  cout << dp.at(N - 1) << endl;
+  cout << dp[n - 1] << endl;
 }

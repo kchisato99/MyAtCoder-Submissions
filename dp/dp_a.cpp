@@ -1,32 +1,35 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-#define min(p, q) ((p) < (q) ? (p) : (q))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 
 int main()
 {
-  int N;
-  cin >> N;
-  vector<int> h(N);
-  for (int i = 0; i < N; i++)
+  int n;
+  cin >> n;
+  vector<int> h(n);
+  for (int i = 0; i < n; i++)
   {
-    cin >> h.at(i);
+    cin >> h[i];
   }
 
-  vector<int> dp(N);
-  dp.at(0) = 0;
-  dp.at(1) = dp.at(0) + abs(h.at(1) - h.at(0));
   /*
-  足場Nにたどり着くのは, 足場N-1またはN-2からのジャンプ
-  dp[i] = 足場iにたどり着くまでの最小コスト を調べる
+  n個の足場, 足場iの高さはh[i]
+  足場1にカエルがいる,
+  カエルは足場iからi+1またはi+2へジャンプする
+  ジャンプ先をjとすると, コスト|h[i] - h[j]|を支払う
+  足場nにたどり着くまでのコストの総和の最小値を求める
   */
-  for (int i = 2; i < N; i++)
+
+  vector<int> dp(n);
+  // dp[i] 足場iにたどり着くまでの最小コスト
+  dp[0] = 0;
+  dp[1] = abs(h[1] - h[0]);
+  for (int i = 2; i < n; i++)
   {
-    dp.at(i) = min(dp.at(i - 1) + abs(h.at(i - 1) - h.at(i)),
-                   dp.at(i - 2) + abs(h.at(i - 2) - h.at(i)));
-    // 足場i-1からジャンプした場合と, 足場i-2からジャンプした場合のコストを比較
+    dp[i] = min(dp[i - 1] + abs(h[i] - h[i - 1]),
+                dp[i - 2] + abs(h[i] - h[i - 2]));
   }
 
-  cout << dp.at(N - 1) << endl;
+  cout << dp[n - 1] << endl;
 }

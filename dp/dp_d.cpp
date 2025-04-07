@@ -1,51 +1,39 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-
-#define max(p, q) ((p) > (q) ? (p) : (q))
 
 int main()
 {
-  // 入力, 宣言
-  int N, W; // N個の品物, ナップサックの容量W
+  int N, W;
   cin >> N >> W;
-  vector<int> w(N), v(N); // 品物i の重さw[i], 価値v[i]
+  vector<int> w(N), v(N);
   for (int i = 0; i < N; i++)
   {
-    cin >> w.at(i) >> v.at(i);
+    cin >> w[i] >> v[i];
   }
 
   /*
-  N個から選んで持ち帰る
-  ナップサックの容量はW, 総和はW以下でなければならない
-  価値の総和の最大値を求める
+  N個の品物, 重さw[i], 価値v[i]
+  重さの合計W以下になるように選ぶ,
+  価値の最大値を求める
   */
-  // dp[i][j] i-1個目の品物までで重さがj以下となるように選んだときの価値の総和の最大値
   vector<vector<long long>> dp(N + 1, vector<long long>(W + 1));
-  // dp[i][j]が求まっている状態でdp[i+1][j]を更新する
+  // dp[i][j] i-1番目までの品物, 重さjの時の価値の最大値
   for (int i = 0; i < N; i++)
   {
     for (int j = 0; j <= W; j++)
     {
-      if (j - w.at(i) >= 0)
-      { // i 番目の品物を選ぶ
-        dp[i + 1].at(j) = max(dp[i].at(j),
-                              dp[i].at(j - w.at(i)) + v.at(i));
+      if (j - w[i] >= 0)
+      {
+        dp[i + 1][j] = max(dp[i][j],
+                           dp[i][j - w[i]] + v[i]);
       }
       else
-      { // i 番目の品物を選ばない
-        dp[i + 1].at(j) = dp[i].at(j);
+      {
+        dp[i + 1][j] = dp[i][j];
       }
+      //cout << dp[i + 1][j] << " ";
     }
+    //cout << endl;
   }
-  /*
-  for (int i = 0; i <= N; i++)
-  {
-    for (int j = 0; j <= W; j++)
-    {
-      cout << setw(2) << dp[i].at(j) << " ";
-    }
-    cout << endl;
-  }*/
-  cout << dp[N].at(W) << endl;
+  cout << dp[N][W] << endl;
 }

@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-#define max(p, q) ((p) > (q) ? (p) : (q))
+//#define max(p, q) ((p) > (q) ? (p) : (q))
 
 int main()
 {
@@ -11,34 +10,36 @@ int main()
   vector<int> a(N), b(N), c(N);
   for (int i = 0; i < N; i++)
   {
-    cin >> a.at(i) >> b.at(i) >> c.at(i);
+    cin >> a[i] >> b[i] >> c[i];
   }
 
   /*
-  夏休みの計画を立てる
-  夏休みはN日間, i日目に幸福度A[i], B[i], C[i]の活動ができる
-  2日連続して同じ活動はできない
+  夏休みN日間, i日目の行動
+  1. 海で泳ぐ a[i]
+  2. 山で虫取り b[i]
+  3. 家で宿題 c[i]
+  2日連続で同じ活動はできない
+  総和の最大値を求める
   */
-  // i日目に活動jを選んだ時の最大幸福度dp[i][j]
+
+  // dp[i][j] i日目に行動jを選んだ時
   vector<vector<int>> dp(N, vector<int>(3));
-  dp.at(0).at(0) = a.at(0); // 海で泳ぐ a[i]
-  dp.at(0).at(1) = b.at(0); // 山で虫取り b[i]
-  dp.at(0).at(2) = c.at(0); // 家で宿題 c[i]
-
-  for (int i = 1; i < N; i++)
+  for (int i = 0; i < N; i++)
   {
-    // i日目に行動aをする場合, i-1日目の行動はb, c のどちらか
-    dp.at(i).at(0) = max(dp.at(i - 1).at(1) + a.at(i),
-                         dp.at(i - 1).at(2) + a.at(i));
-    dp.at(i).at(1) = max(dp.at(i - 1).at(0) + b.at(i),
-                         dp.at(i - 1).at(2) + b.at(i));
-    dp.at(i).at(2) = max(dp.at(i - 1).at(0) + c.at(i),
-                         dp.at(i - 1).at(1) + c.at(i));
+    if (i == 0)
+    {
+      dp[i][0] = a[i];
+      dp[i][1] = b[i];
+      dp[i][2] = c[i];
+    }
+    else
+    {
+      dp[i][0] = a[i] + max(dp[i - 1][1], dp[i - 1][2]);
+      dp[i][1] = b[i] + max(dp[i - 1][0], dp[i - 1][2]);
+      dp[i][2] = c[i] + max(dp[i - 1][0], dp[i - 1][1]);
+    }
   }
-
-  // N日目の最大幸福度
-  int max_happiness = max(max(dp.at(N - 1).at(0), dp.at(N - 1).at(1)),
-                          dp.at(N - 1).at(2));
-
-  cout << max_happiness << endl;
+  cout << max(dp[N - 1][0],
+              max(dp[N - 1][1], dp[N - 1][2]))
+       << endl;
 }
